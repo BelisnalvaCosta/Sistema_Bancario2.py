@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title></title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="css/style.css" rel="stylesheet">
-    </head>
-    <body>
-    
-    </body>
+<html lang="pt-br">
+	<header>
+		<meta charset="utf-8">
+	<title>CRUD - Cadastrar Cliente</title>
+	</header>
+	<body>
+		<h1>Cadastrar Cliente </h1>
+		<form method="POST" action="cadastraCliente.php">
+			<label>Nome:</label>
+			<input type="text" name="nome" placeholder="Digite o nome do cliente"><br><br>
+			<label>Numero_conta:</label>
+            <input type="numero_conta" name="numero_conta" placeholder="Digite o número da conta"><br><br>
+            <label>CPF/CNPJ:</label>
+            <input type="cpf/cnpj" name="cpf/cnpj" placeholder="Digite o CPF ou CNPJ"><br><br>
+            <label>E-Mail:</label>
+			<input type="email" name="emil" placeholder="Digite o seu e-mail"><br><br>
+			<input type="submit" value="Cadastrar">
+		</form>
+	</body>
+	</header>
 </html>
