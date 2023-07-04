@@ -50,16 +50,16 @@ class PessoaJuridica(Cliente):
         self.cnpj = cnpj
 
 class Conta:
-    def __init__(self, numero, cliente):
+    def __init__(self, cliente, numero_conta):
         self._saldo = 0
-        self._numero = numero
+        self._numero = numero_conta
         self._agencia = "0001"
         self._cliente = cliente
         self._historico = Historico()
 
     @classmethod
-    def nova_conta(cls, cliente, numero):
-        return cls(numero, cliente)
+    def nova_conta(cls, cliente, numero_conta) -> conta:
+        return cls(numero_conta, cliente)
 
     @property
     def saldo(self):
@@ -67,7 +67,7 @@ class Conta:
 
     @property
     def numero(self):
-        return self._numero
+        return self._numero_conta
 
     @property
     def agencia(self):
@@ -162,11 +162,9 @@ class Historico:
 
 class Transacao(ABC):
     @property
-    @abstractproperty
     def valor(self):
         pass
 
-    @abstractclassmethod
     def registrar(self, conta):
         pass
 
@@ -200,7 +198,7 @@ class Deposito(Transacao):
         if sucesso_transacao:
             conta.historico.adicionar_transacao(self)
 
-def depositar(clientes):
+def depositar(clientes, cnpj=None):
     cpf = input("Informe o CPF ou CNPJ do cliente: ")
     cliente = filtrar_cliente(cpf, cnpj, clientes)
 
@@ -220,7 +218,7 @@ def depositar(clientes):
 
     cliente.realizar_transacao(conta, transacao)    
     
-def sacar(clientes):
+def sacar(clientes, cnpj=None):
         cpf = input("Informe o CPF ou CNPJ do cliente: ")
         cliente = filtrar_cliente(cpf/cnpj, clientes)
         
@@ -236,17 +234,7 @@ def sacar(clientes):
             return
 
         cliente.realizar_transacao(conta, transacao)
-
-        elif valor > 0:        
-        saldo -= valor
-        extrato += f"Saque:\t\tR$ {valor:.2f}\n"
-        numero_saques += 3
-        print("\n=== Saque realizado com sucesso! ===")
-        else:
-        print("\n@@@ Tente novamente! o valor informado é inválido. @@@")
-
-        return saldo, extrato
-
+       
 def exibir_extrato(clientes):
     cpf = input("Informe o CPF do cliente: ")
     cliente = filtrar_cliente(cpf, clientes)
@@ -273,9 +261,9 @@ def exibir_extrato(clientes):
     print(f"\nSaldo:\n\tR$ {conta.saldo:.2f}")
     print("============ // ============")
 
-def criar_cliente(clientes):
+def criar_cliente(clientes, cpf, cnpj):
     cpf = input("Informe o CPF(só aceita números): ")
-    cliente = filtrar_cliente(cpf, clientes)
+    cliente = filtrar_cliente(cpf, cnpj, clientes)
 
     if cliente:
         print("\n@@@ Já existe cliente com esse CPF!. @@@")
@@ -286,15 +274,15 @@ def criar_cliente(clientes):
     endereco_residencia = input("Informe o endereço(logadouro, número - bairro - cidade/sigra estado): ")
     endereco_empresa = input("Informe o endereço da empresa ou repartição pública(logadouro, número - bairro - cidade/sigra estado): ")
 
-    cliente.PessoaFisica(nome=nome, data_nascimento=data_nascimento, cpf=cpf, endereco=endereco)
+    cliente.PessoaFisica(nome=nome, data_nascimento=data_nascimento, cpf=cpf, endereco=endereco_residencia)
 
-    cliente.PessoaJuridica(nome=nome, data_nascimento=data_nascimento, cnpj=cnpj, endereco=endereco_residencia, endereco=endereco_empresa)
+    cliente.PessoaJuridica(nome=nome, data_nascimento=data_nascimento, cnpj=cnpj, endereco=endereco_empresa)
 
     cliente.append(cliente)
     print("=== Cliente criado com sucesso! ===")
 
 def filtrar_cliente(cpf, cnpj, clientes):
-    clientes_filtrados = [cliente for cliente in clientes if cliente.cpf == cpf
+    clientes_filtrados = [cliente for cliente in clientes if cliente.cpf == cpf]
     return clientes_filtrados[0] if clientes_filtrados else None
 
 def recuperar_conta_cliente(cliente):
@@ -336,6 +324,7 @@ def listar_contas(contas):
         print(textwrap.dedent(str(conta)))
 
 def main():
+    global conta
     clientes = []
     contas = []
 
@@ -351,7 +340,7 @@ def main():
             exibir_extrato(clientes)
 
         elif opcao == "nu":
-            criar_usuario(clientes)
+            criar_cliente(clientes)
 
         elif opcao == "nc":
             numero_conta = len(contas) + 1
